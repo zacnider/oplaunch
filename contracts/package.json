@@ -1,0 +1,25 @@
+{
+  "name": "oplaunch-contracts",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "OpLaunch smart contracts - Token Launchpad + Bonding Curve + Staking on OP_NET",
+  "scripts": {
+    "build:token": "asc src/token/index.ts --target token --measure --uncheckedBehavior never",
+    "build:curve": "asc src/bonding-curve/index.ts --target curve --measure --uncheckedBehavior never",
+    "build:staking": "asc src/staking-vault/index.ts --target staking --measure --uncheckedBehavior never",
+    "build:factory": "asc src/token-factory/index.ts --target factory --measure --uncheckedBehavior never",
+    "build": "npm run build:token && npm run build:curve && npm run build:staking && npm run build:factory",
+    "deploy": "tsx deploy.ts"
+  },
+  "dependencies": {
+    "@btc-vision/as-bignum": "latest",
+    "@btc-vision/btc-runtime": "rc",
+    "@btc-vision/assemblyscript": "latest",
+    "@btc-vision/opnet-transform": "latest",
+    "@btc-vision/transaction": "rc",
+    "@btc-vision/bitcoin": "rc",
+    "opnet": "rc",
+    "dotenv": "^16.3.0",
+    "tsx": "^4.7.0"
+  }
+}

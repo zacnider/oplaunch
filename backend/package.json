@@ -1,0 +1,25 @@
+{
+  "name": "oplaunch-backend",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "OpLaunch Backend API - hyper-express server",
+  "scripts": {
+    "dev": "tsx watch src/index.ts",
+    "build": "tsc",
+    "start": "node dist/index.js"
+  },
+  "dependencies": {
+    "@btc-vision/bitcoin": "rc",
+    "@btc-vision/transaction": "rc",
+    "better-sqlite3": "^11.10.0",
+    "dotenv": "^16.3.0",
+    "hyper-express": "^6.16.0",
+    "opnet": "rc"
+  },
+  "devDependencies": {
+    "@types/better-sqlite3": "^7.6.13",
+    "@types/node": "^20.10.0",
+    "tsx": "^4.7.0",
+    "typescript": "^5.3.0"
+  }
+}
