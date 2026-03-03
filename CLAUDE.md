@@ -106,4 +106,4 @@ VITE_BACKEND_URL="" npm run build
 - OP_NET Testnet: https://testnet.opnet.org
 - Explorer: https://opscan.org/
 - Bech32 HRP: opt
-- OP_NET is Bitcoin L1 metaprotocol (NOT L2)
+- OP_NET is Bitcoin L1 
