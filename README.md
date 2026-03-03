@@ -61,7 +61,7 @@ oplaunch/
 ### Prerequisites
 - Node.js 20+
 - npm
-- [OPWallet](https://opwallet.org) browser extension (for testnet transactions)
+- [OPWallet](https://opnet.org/opwallet/) browser extension (for testnet transactions)
 
 ### Install
 
