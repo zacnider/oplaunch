@@ -141,7 +141,6 @@ All contracts are written in AssemblyScript and compiled to WASM for OP_NET:
 
 OP_NET is a Bitcoin **L1** metaprotocol — not an L2 or sidechain. Smart contracts execute directly on Bitcoin.
 
-## Screenshots
 
 Visit [https://oplaunch.cc](https://oplaunch.cc) to see the live application.
 
