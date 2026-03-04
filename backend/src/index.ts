@@ -14,7 +14,9 @@ import { chainService } from './services/ChainService.js';
 
 dotenv.config();
 
-const app = new HyperExpress.Server();
+const app = new HyperExpress.Server({
+  max_body_length: 10 * 1024 * 1024, // 10MB — base64 images can be large
+});
 const PORT = parseInt(process.env.PORT || '3001');
 
 // CORS middleware
