@@ -51,7 +51,7 @@ oplaunch/
 
 1. **Create Token** — User fills in token name, symbol, and image. Backend deploys a real OP_20 token contract + BondingCurve contract to Bitcoin L1.
 2. **Buy on Curve** — Users send BTC to buy tokens. Price increases along the bonding curve. BTC goes to an escrow address.
-3. **Graduate** — When the bonding curve reaches its target (e.g. 0.01 BTC total deposited), the token graduates. Remaining supply + BTC liquidity seed an on-chain AMM pool.
+3. **Graduate** — When the bonding curve reaches its target (e.g. 0.3 BTC total deposited), the token graduates. Remaining supply + BTC liquidity seed an on-chain AMM pool.
 4. **Trade on DEX** — Post-graduation, users swap BTC<>Token on the AMM pool with constant-product pricing.
 5. **Stake** — A StakingVault contract is deployed for each graduated token. Users stake tokens to earn rewards.
 6. **Claim BTC** — Sellers and escrow participants can claim their BTC through the escrow withdrawal system.
