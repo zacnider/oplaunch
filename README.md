@@ -23,6 +23,65 @@ OpLaunch is a full-stack DeFi platform built on **Bitcoin Layer 1** using [OP_NE
 ## Architecture
 
 ```
+                         ┌──────────────────────────────────┐
+                         │         Bitcoin L1 Network        │
+                         │          (OP_NET Testnet)         │
+                         └──────────┬───────────────────────┘
+                                    │
+                    ┌───────────────┼───────────────┐
+                    ▼               ▼               ▼
+           ┌──────────────┐ ┌─────────────┐ ┌─────────────┐
+           │ BondingCurve │ │ OpLaunchToken│ │ StakingVault│
+           │  (per token) │ │  (OP_20)    │ │ (per grad.) │
+           │              │ │             │ │             │
+           │ • Buy/Sell   │ │ • Transfer  │ │ • Stake     │
+           │ • AMM Pool   │ │ • Approve   │ │ • Unstake   │
+           │ • Graduate   │ │ • Mint/Burn │ │ • Rewards   │
+           │ • Escrow     │ │ • BalanceOf │ │ • Compound  │
+           └──────┬───────┘ └──────┬──────┘ └──────┬──────┘
+                  │                │               │
+                  └────────┬───────┘               │
+                           ▼                       │
+              ┌────────────────────────┐           │
+              │   OP_NET JSON-RPC      │           │
+              │  testnet.opnet.org     │◄──────────┘
+              └─────────┬──────────────┘
+                        │
+          ┌─────────────┴─────────────┐
+          ▼                           ▼
+┌───────────────────┐     ┌────────────────────────┐
+│  Backend (API)    │     │  Frontend (SPA)        │
+│  hyper-express    │     │  React + Vite + TS     │
+│                   │     │                        │
+│ Services:         │     │ Pages:                 │
+│ • DeployService   │◄────│ • Home / Launch        │
+│ • ChainService    │ API │ • Create Token         │
+│ • EscrowService   │     │ • Token Detail         │
+│ • TradeService    │────►│ • DEX Swap             │
+│ • DatabaseService │     │ • Staking              │
+│                   │     │ • Docs                 │
+│ Storage:          │     │                        │
+│ • SQLite (trades) │     │ Hooks:                 │
+│ • JSON (tokens)   │     │ • useBondingCurve      │
+│                   │     │ • useStaking           │
+│ Bob AI:           │     │ • useOP20              │
+│ • Anthropic API   │     │                        │
+└───────────────────┘     │ Wallet:                │
+                          │ • OPWallet Extension   │
+                          └────────────────────────┘
+
+Token Lifecycle:
+━━━━━━━━━━━━━━━
+  Create          Buy/Sell          Graduate         Stake
+  ┌─────┐  deploy  ┌─────────┐  0.3 BTC  ┌──────┐  vault  ┌───────┐
+  │ Form │───────►│  Curve   │─────────►│  DEX  │──────►│ Vault │
+  └─────┘  3 txs   │ Trading │  auto     │ (AMM) │deploy │Rewards│
+                    └─────────┘           └──────┘       └───────┘
+```
+
+### Directory Structure
+
+```
 oplaunch/
   contracts/       Smart contracts (AssemblyScript -> WASM)
     src/
@@ -32,7 +91,7 @@ oplaunch/
       token-factory/   TokenFactory.ts - on-chain token factory
   frontend/        React + Vite + TypeScript SPA
     src/
-      pages/         Home, Launch, Create, Token Detail, Swap, Staking
+      pages/         Home, Launch, Create, Token Detail, Swap, Staking, Docs
       components/    TradeHistoryTable, HolderList, Header, Footer, BobAI
       hooks/         useBondingCurve, useStaking, useTradeHistory, useOP20
       context/       ProviderContext (JSON-RPC provider)
