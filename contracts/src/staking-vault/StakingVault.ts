@@ -9,6 +9,7 @@ import {
     StoredU256,
     AddressMemoryMap,
     SafeMath,
+    TransferHelper,
     EMPTY_POINTER,
 } from '@btc-vision/btc-runtime/runtime';
 import { u256 } from '@btc-vision/as-bignum/assembly';
@@ -134,6 +135,14 @@ export class StakingVault extends OP_NET {
         const sender = Blockchain.tx.sender;
         this._updateReward(sender);
 
+        // Transfer tokens from user to this vault (user must have approved first)
+        TransferHelper.transferFrom(
+            this.stakingToken.value,
+            sender,
+            Blockchain.contractAddress,
+            amount,
+        );
+
         const currentStake = this.userStakes.get(sender);
         this.userStakes.set(sender, SafeMath.add(currentStake, amount));
         this.totalStaked.value = SafeMath.add(this.totalStaked.value, amount);
@@ -163,6 +172,9 @@ export class StakingVault extends OP_NET {
         this.userStakes.set(sender, SafeMath.sub(currentStake, amount));
         this.totalStaked.value = SafeMath.sub(this.totalStaked.value, amount);
 
+        // Transfer tokens back from vault to user
+        TransferHelper.transfer(this.stakingToken.value, sender, amount);
+
         const writer = new BytesWriter(1);
         writer.writeBoolean(true);
         return writer;
@@ -185,6 +197,9 @@ export class StakingVault extends OP_NET {
             this.totalRewardsDistributed.value,
             reward,
         );
+
+        // Transfer reward tokens to user
+        TransferHelper.transfer(this.rewardToken.value, sender, reward);
 
         const writer = new BytesWriter(32);
         writer.writeU256(reward);
