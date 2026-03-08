@@ -238,6 +238,7 @@ export const STAKING_VAULT_ABI = [
       { name: 'totalStaked', type: ABIDataTypes.UINT256 },
       { name: 'rewardRate', type: ABIDataTypes.UINT256 },
       { name: 'rewardEndBlock', type: ABIDataTypes.UINT256 },
+      { name: 'rewardPerTokenStored', type: ABIDataTypes.UINT256 },
     ],
   },
 ];
