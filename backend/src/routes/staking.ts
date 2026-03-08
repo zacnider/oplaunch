@@ -20,6 +20,7 @@ export function stakingRoutes(app: HyperExpress.Server) {
       }));
       res.json({ pools });
     } catch (error) {
+      console.error('[staking] GET pools error:', error);
       res.status(500).json({ error: 'Failed to fetch staking pools' });
     }
   });
@@ -43,8 +44,9 @@ export function stakingRoutes(app: HyperExpress.Server) {
           status: 'active',
         });
       }
-      res.status(404).json({ error: 'Pool not found' });
+      return res.status(404).json({ error: 'Pool not found' });
     } catch (error) {
+      console.error('[staking] GET pool error:', error);
       res.status(500).json({ error: 'Failed to fetch pool' });
     }
   });
@@ -64,7 +66,39 @@ export function stakingRoutes(app: HyperExpress.Server) {
       }
       res.json({ total: missing.length, resolved });
     } catch (error) {
+      console.error('[staking] POST resolve-pubkeys error:', error);
       res.status(500).json({ error: 'Failed to resolve vault pubkeys' });
+    }
+  });
+
+  // Redeploy vault for a graduated token (replaces old broken vault)
+  app.post('/api/staking/redeploy-vault/:tokenId', async (req, res) => {
+    try {
+      const token = await chainService.getToken(req.path_parameters.tokenId);
+      if (!token) {
+        return res.status(404).json({ error: 'Token not found' });
+      }
+      if (token.status !== 'graduated') {
+        return res.status(400).json({ error: 'Token not graduated' });
+      }
+      if (deployService.isDeploying()) {
+        return res.status(409).json({ error: 'Another deployment in progress' });
+      }
+
+      console.log(`[staking] Redeploying vault for ${token.name} (${token.tokenId})`);
+      const result = await deployService.deployVault(token.tokenId);
+      if (result) {
+        chainService.updateTokenVault(token.tokenId, result.vaultAddress, result.contractPubKey);
+        return res.json({
+          success: true,
+          vaultAddress: result.vaultAddress,
+          vaultPubKey: result.contractPubKey,
+        });
+      }
+      return res.status(500).json({ error: 'Vault deployment failed' });
+    } catch (error) {
+      console.error('[staking] POST redeploy-vault error:', error);
+      res.status(500).json({ error: 'Failed to redeploy vault' });
     }
   });
 
@@ -78,6 +112,7 @@ export function stakingRoutes(app: HyperExpress.Server) {
         totalGraduated: graduated.length,
       });
     } catch (error) {
+      console.error('[staking] GET stats error:', error);
       res.status(500).json({ error: 'Failed to fetch staking stats' });
     }
   });
